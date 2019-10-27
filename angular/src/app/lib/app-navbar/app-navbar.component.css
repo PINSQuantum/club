@@ -3,6 +3,14 @@
     max-width: 40px;
 }
 
+.user-picture {
+  display: inline-block;
+  background-size: 100%;
+  width: 36px;
+  height: 36px;
+  margin: 0 6px 0 -16px;
+}
+
 .rating-shield {
     transform: scale(0.7);
 }

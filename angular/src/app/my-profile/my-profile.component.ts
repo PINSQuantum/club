@@ -277,7 +277,7 @@ export class MyProfileComponent implements OnInit {
   }
 
   updatePersonData(formData) {
-    this.updateProfile(formData);
+    this.updateProfile({formData, pictureUrl: this.user.pictureUrl});
   }
 
   updateUser(formData) {
@@ -433,11 +433,14 @@ export class MyProfileComponent implements OnInit {
 
   openUrlDialog() {
       const dialogRef = this.dialog.open(ProfileImageDialogComponent, {
-        width: '250px',
+        width: '600px',
+        data: {pictureUrl: this.user.pictureUrl}
       });
   
-      dialogRef.afterClosed().subscribe(result => {
-        console.log('The dialog was closed', result);
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result !== undefined)  {
+          this.user.pictureUrl = result;
+        }
       });
   }
 

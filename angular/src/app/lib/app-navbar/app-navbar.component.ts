@@ -4,6 +4,7 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { UserFirebaseService } from '../../user-firebase.service';
 import { User } from '../../entity/user/user';
 import { Router, NavigationEnd } from '@angular/router';
+import { timingSafeEqual } from 'crypto';
 
 
 @Component({
@@ -20,6 +21,7 @@ export class AppNavbarComponent implements OnInit {
   metal = "";
   isIE;
   profileSelected: boolean = false;
+  user$;
 
   menuFields = [
     {'displayName' : "events", 'link' : "/events", 'description': "Listen over bruger arrangementer. Find dit næste event!", "selected": false},
@@ -49,8 +51,8 @@ export class AppNavbarComponent implements OnInit {
 
     // this.isIEOrEdge = /msie\s|trident\/|edge\//i.test(window.navigator.userAgent);
     this.isIE = /msie\s|trident\//i.test(window.navigator.userAgent);
-
-    let observer = this.ufbs.getUserByID(this.authService.afAuth.auth.currentUser.uid).subscribe(u => {
+    this.user$ = this.ufbs.getUserByID(this.authService.afAuth.auth.currentUser.uid);
+    let observer = this.user$.subscribe(u => {
       let user: User = new User(u);
       if (user.username) {
         this.username = user.username;

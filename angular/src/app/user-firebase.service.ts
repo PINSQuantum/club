@@ -50,9 +50,9 @@ export class UserFirebaseService {
   }
 
   //Test passed
-  insertUser(user: User, id: string) {
-    this.db.object(this.dbPath + id).update(user);
+  insertUser(user: User, id: string): Promise<void> {
     this.urs.insertRole({fk_id: id, type: this.urs.userTypes.MEMBER});
+    return this.db.object(this.dbPath + id).update(user)
    }
  
    updateUser(objwithUpdates, id: string) {

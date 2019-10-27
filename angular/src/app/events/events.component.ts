@@ -32,7 +32,6 @@ export class EventsComponent implements OnInit {
     if (window.screen.width <= 600) {
       this.isMobile = true;
     } 
-    this.newUserRoutine();
   }
 
   showAllEvents(isJoinedShown: boolean) {
@@ -51,34 +50,6 @@ export class EventsComponent implements OnInit {
     this.eventsList.showJoinedEvents(isJoinedShown);
   }
 
-  newUserRoutine() {
-    const firebaseUser = this.authService.afAuth.auth.currentUser;
-    let userExists = false;
-    let u: User;
-    
-    let observer = this.ufbs.getList().subscribe( userSnapshots => {
-      userSnapshots.forEach(userSnapshot => {
-        if (userSnapshot.key === firebaseUser.uid) {
-          userExists = true;
-          u = new User(userSnapshot.payload.val());
-          
-        }
-      });
-      if (!userExists) {
-        const userEntity: User = new User({"username": firebaseUser.displayName, "email": firebaseUser.email});
-        const date = new Date();
-        date.setUTCFullYear(2019, 0, 1);
-        userEntity.subscribed_until = date;
-        this.ufbs.insertUser(userEntity, firebaseUser.uid);
-      } else {
-        
-        if (u.isActivated === false && !this.authService.isDeletingUser) {
-          this.toast.warning('Din profil er ikke aktiv. For at aktivere skal du udfylde "Min Profil"','Hov!');
-        } 
-      }
-      observer.unsubscribe();
-    });
 
-  }
 
 }

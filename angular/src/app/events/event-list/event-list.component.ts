@@ -16,6 +16,7 @@ import { User } from '../../entity/user/user';
 import { GeoCodingApiService } from '../../geo-coding-api.service';
 import { userInfo } from 'os';
 import { RatingService } from 'src/app/rating.service';
+import { first } from 'rxjs/operators';
 
 export interface EventData {
   name: string;
@@ -75,8 +76,12 @@ export class EventListComponent implements OnInit {
       this.ratings = ratings;
     });
 
-    this.ufbs.getUserByID(this.authService.afAuth.auth.currentUser.uid).subscribe( (userSnapshot:any) => {
-      this.username = userSnapshot.username;
+    this.ufbs.getUserByID(this.authService.afAuth.auth.currentUser.uid).pipe(first()).subscribe( (userSnapshot:any) => {
+      if(userSnapshot) {
+        this.username = userSnapshot.username;
+      } else {
+        this.authService.doSignout();
+      }
     });
 
     this.efbs.getList().subscribe((eventSnapshots: any) => {
@@ -90,6 +95,7 @@ export class EventListComponent implements OnInit {
       //   event.deadlineDate = new Date(event.deadlineDate).getTime() || 1567987200000;
       //   event.creationDate = new Date(event.creationDate).getTime() || 1567987200000;
       // })
+
      
 
       this.ufbs.getUserByID(this.authService.afAuth.auth.currentUser.uid).subscribe(userSnapshot => {

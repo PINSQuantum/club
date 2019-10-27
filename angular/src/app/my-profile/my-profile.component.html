@@ -3,203 +3,187 @@
 
 <div class="container">
 
-    <div class="welcome-message" *ngIf="!isProfileFilled">
-        <span>
-            {{'PAGES.MY_PROIFLE.WELCOME_MESSAGE' | translate}}
-        </span>
-    </div>
+  <div class="welcome-message" *ngIf="!isProfileFilled">
+    <span>
+      {{'PAGES.MY_PROIFLE.WELCOME_MESSAGE' | translate}}
+    </span>
+  </div>
 
-    <div [className]="showHide">
-        <mat-progress-bar class="example-margin" [color]="color" [mode]="mode" [value]="value">
+  <div [className]="showHide">
+    <mat-progress-bar class="example-margin" [color]="color" [mode]="mode" [value]="value">
 
-        </mat-progress-bar>
-    </div>
+    </mat-progress-bar>
+  </div>
 
-    <!-- Desktop -->
-    <div class="row">
+  <!-- Desktop -->
+  <div class="row">
 
-        <mat-card>
+    <mat-card>
+      <h4>Min Profil</h4>
+      
+      <form [formGroup]="personDataForm">
 
-            <form [formGroup]="personDataForm">
+        <div class="personal-info">
+          <div class="picture">
+            <img [src]="user.pictureUrl" alt="">
+            <div class="overlayUpload">
+              <button mat-raised-button (click)="openUrlDialog()">Pick one</button>
+            </div>
+          </div>
 
-                <div class="personal-info">
-                    <div class="picture">
-                        <img src="https://nurdspace.nl/images/thumb/3/35/Cytherea.jpg/260px-Cytherea.jpg" alt="">
-                        <div class="overlayUpload">
-                            <button mat-raised-button (click)="openUrlDialog()">Pick one</button>
-                            <!-- 
-                                     (click)="fileInput.click()"
-                                    <span>Upload</span>
-                                <input #fileInput type="file" (change)="onFileInput($event)" style="display:none;" /> -->
-                        </div>
-                    </div>
+          <div class="info">
+            <div class="name">
+              <mat-form-field class="block-field">
+                <input matInput formControlName="username" id="username" name="username" placeholder="Brugernavn"
+                  type="text">
+              </mat-form-field>
+              <mat-form-field class="block-field">
+                <input matInput id="name" formControlName="firstName" name="firstName" placeholder="Fornavn" type="text"
+                  autofocus>
+              </mat-form-field>
+              <mat-form-field>
+                <input matInput id="lastname" formControlName="lastName" name="lastName" placeholder="Efternavn"
+                  type="text">
+              </mat-form-field>
 
-                    <div class="info">
-                        <div class="name">
-                            <mat-form-field class="block-field">
-                                <input matInput formControlName="username" id="username" name="username"
-                                    placeholder="Brugernavn" type="text">
-                            </mat-form-field>
-                            <mat-form-field class="block-field">
-                                <input matInput id="name" formControlName="firstName" name="firstName"
-                                    placeholder="Fornavn" type="text" autofocus>
-                            </mat-form-field>
-                            <mat-form-field>
-                                <input matInput id="lastname" formControlName="lastName" name="lastName"
-                                    placeholder="Efternavn" type="text">
-                            </mat-form-field>
+            </div>
 
-                        </div>
+            <div class="birthday">
+              <mat-form-field class="block-field">
+                <input id="birthday" [min]="min" [max]="max" formControlName="birthday" matInput
+                  [matDatepicker]="picker" placeholder="DD/MM/YYYY">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
 
-                        <div class="birthday">
-                            <mat-form-field class="block-field">
-                                <input id="birthday" [min]="min" [max]="max" formControlName="birthday" matInput
-                                    [matDatepicker]="picker" placeholder="DD/MM/YYYY">
-                                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                                <mat-datepicker #picker></mat-datepicker>
-                            </mat-form-field>
+              <mat-form-field class="block-field">
+                <mat-select formControlName="gender" placeholder="Køn">
+                  <mat-option value="Mand">Mand</mat-option>
+                  <mat-option value="Kvinde">Kvinde</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
 
-                            <mat-form-field class="block-field">
-                                <mat-select formControlName="gender" placeholder="Køn">
-                                    <mat-option value="Mand">Mand</mat-option>
-                                    <mat-option value="Kvinde">Kvinde</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </div>
+            <div class="address">
+              <mat-form-field>
+                <mat-label>Adresse</mat-label>
+                <input matInput type="text" formControlName="street" placeholder="Minvej 99">
+              </mat-form-field>
 
-                        <div class="address">
-                            <mat-form-field>
-                                <mat-label>Adresse</mat-label>
-                                <input matInput type="text" formControlName="street" placeholder="Minvej 99">
-                            </mat-form-field>
+              <mat-form-field>
+                <mat-label>Postnummer</mat-label>
+                <input (keyup)="lookUpCity($event.target.value)" matInput type="text" formControlName="zip"
+                  id="inputZip" placeholder="1234">
+              </mat-form-field>
 
-                            <mat-form-field>
-                                <mat-label>Postnummer</mat-label>
-                                <input (keyup)="lookUpCity($event.target.value)" matInput type="text"
-                                    formControlName="zip" id="inputZip" placeholder="1234">
-                            </mat-form-field>
+              <mat-form-field>
+                <mat-label>By</mat-label>
+                <input readonly matTooltip="Slåes op automatisk" matInput type="text" formControlName="city"
+                  id="inputBy" placeholder="...">
+              </mat-form-field>
+            </div>
 
-                            <mat-form-field>
-                                <mat-label>By</mat-label>
-                                <input readonly matTooltip="Slåes op automatisk" matInput type="text"
-                                    formControlName="city" id="inputBy" placeholder="...">
-                            </mat-form-field>
-                        </div>
-
-                        <div class="telephone">
+            <div class="telephone">
 
 
-                            <mat-form-field class="block-field">
-                                <mat-label>Mobil/telefon</mat-label>
-                                <input matInput matTooltip="8 cifre" formControlName="phone" placeholder="12345678" />
-                            </mat-form-field>
+              <mat-form-field class="block-field">
+                <mat-label>Mobil/telefon</mat-label>
+                <input matInput matTooltip="8 cifre" formControlName="phone" placeholder="12345678" />
+              </mat-form-field>
 
-                            <mat-form-field class="block-field">
-                                <input (keyup)="displayBirthdayInput($event.target.value)" min="0" max="9"
-                                    pattern="[0-9]" title="Antal børn [0-9]" matInput type="number"
-                                    formControlName="numberOfChildren" placeholder="Antal børn" />
-                            </mat-form-field>
+              <mat-form-field class="block-field">
+                <input (keyup)="displayBirthdayInput($event.target.value)" min="0" max="9" pattern="[0-9]"
+                  title="Antal børn [0-9]" matInput type="number" formControlName="numberOfChildren"
+                  placeholder="Antal børn" />
+              </mat-form-field>
 
-                            <mat-form-field *ngFor="let child of frontEndModellerChildren; let i = index;"
-                                class="block-field">
-                                <input [min]="childMin" [max]="childMax" formControlName="{{child.formControlName}}"
-                                    matInput [matDatepicker]="i" placeholder="{{child.view}}" [attr.id]="dtPicker + i">
-                                <mat-datepicker-toggle matSuffix [for]="i"></mat-datepicker-toggle>
-                                <mat-datepicker #i></mat-datepicker>
+              <mat-form-field *ngFor="let child of frontEndModellerChildren; let i = index;" class="block-field">
+                <input [min]="childMin" [max]="childMax" formControlName="{{child.formControlName}}" matInput
+                  [matDatepicker]="i" placeholder="{{child.view}}" [attr.id]="dtPicker + i">
+                <mat-datepicker-toggle matSuffix [for]="i"></mat-datepicker-toggle>
+                <mat-datepicker #i></mat-datepicker>
 
-                            </mat-form-field>
-                        </div>
-                    </div>
-                </div>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
 
-
-
-
+          <button [disabled]="isUpdating" (click)="updatePersonData(personDataForm.value); onUpdateClick()"
+          mat-raised-button color="primary">Opdater</button>
 
 
+      <h4>Indstillinger</h4>
+      <label> Ønsker du at modtage mail om nye arrangementer:</label>
 
-                <mat-card>
-                    <user-image-gallery></user-image-gallery>
-                </mat-card>
-
-                <mat-card>
-                    <image-upload></image-upload>
-                </mat-card>
-
-
-
-
-                <label> Ønsker du at modtage mail om nye arrangementer:</label>
-
-                <mat-radio-group formControlName="notifications">
-                    <mat-radio-button [checked]="selected === 'Ved hvert nyt event'" value="Ved hvert nyt event">Ved
-                        hvert nyt event</mat-radio-button>
-                    <mat-radio-button [checked]="selected === 'Dagligt'" value="Dagligt ">Dagligt</mat-radio-button>
-                    <mat-radio-button [checked]="selected === 'Ugentligt'" value="Ugentligt">Ugentligt
-                    </mat-radio-button>
-                    <mat-radio-button [checked]="selected === 'Aldrig'" value="Aldrig">Aldrig</mat-radio-button>
-                </mat-radio-group>
+        <mat-radio-group formControlName="notifications">
+          <mat-radio-button [checked]="selected === 'Ved hvert nyt event'" value="Ved hvert nyt event">Ved
+            hvert nyt event</mat-radio-button>
+          <mat-radio-button [checked]="selected === 'Dagligt'" value="Dagligt ">Dagligt</mat-radio-button>
+          <mat-radio-button [checked]="selected === 'Ugentligt'" value="Ugentligt">Ugentligt
+          </mat-radio-button>
+          <mat-radio-button [checked]="selected === 'Aldrig'" value="Aldrig">Aldrig</mat-radio-button>
+        </mat-radio-group>
 
 
-                <button [disabled]="isUpdating" (click)="updatePersonData(personDataForm.value); onUpdateClick()"
-                    mat-raised-button color="primary">Opdater</button>
-                <button mat-button color="primary" (click)="fieldsMissing()">Hvad mangler jeg?</button>
+        
 
-                <h4>Skjul/vis profil</h4>
-                <mat-chip-list>
-                    <mat-chip selected color="primary" *ngIf="isActivated">
-                        <mat-icon> visibility</mat-icon>Synlig
-                    </mat-chip>
-                    <mat-chip selected color="warn" *ngIf="!isActivated">
-                        <mat-icon> visibility_off</mat-icon>Skjult
-                    </mat-chip>
-                </mat-chip-list>
-                <button mat-raised-button color="primary" [disabled]="isActivated" (click)='activateAccount()'>Aktiver
-                    profil</button>
-                <button mat-raised-button color="warn" [disabled]="!isActivated" (click)='deactivateAccount()'>Deaktiver
-                    profil</button>
+        <h4>Skjul/vis profil</h4>
+        <mat-chip-list>
+          <mat-chip selected color="primary" *ngIf="isActivated">
+            <mat-icon> visibility</mat-icon>Synlig
+          </mat-chip>
+          <mat-chip selected color="warn" *ngIf="!isActivated">
+            <mat-icon> visibility_off</mat-icon>Skjult
+          </mat-chip>
+        </mat-chip-list>
+        <button mat-raised-button color="primary" [disabled]="isActivated" (click)='activateAccount()'>Aktiver
+          profil</button>
+        <button mat-raised-button color="warn" [disabled]="!isActivated" (click)='deactivateAccount()'>Deaktiver
+          profil</button>
 
-                <h4>Slet Profil</h4>
-                <label *ngIf="usernameValidation"> <strong style="color:red">Advarsel:</strong> denne handling er
-                    permanent. Al credit, fremgang vil blive slettet og kan ikke gøres om</label>
+        <h4>Slet Profil</h4>
+        <label *ngIf="usernameValidation"> <strong style="color:red">Advarsel:</strong> denne handling er
+          permanent. Al credit, fremgang vil blive slettet og kan ikke gøres om</label>
 
-                <mat-form-field>
-                    <input (keyup)="usernameInput($event.target.value)"
-                        matTooltip="Bemærk at du skal tage højde for store og små bogstaver" matInput
-                        placeholder="Indtast brugernavn">
-                </mat-form-field>
-                <button *ngIf="usernameValidation" (click)="deleteAccount()" mat-raised-button color="warn">Slet
-                    profil</button>
+        <mat-form-field>
+          <input (keyup)="usernameInput($event.target.value)"
+            matTooltip="Bemærk at du skal tage højde for store og små bogstaver" matInput
+            placeholder="Indtast brugernavn">
+        </mat-form-field>
+        <button *ngIf="usernameValidation" (click)="deleteAccount()" mat-raised-button color="warn">Slet
+          profil</button>
 
 
-            </form>
+      </form>
 
 
-            <mat-list>
-                <mat-list-item>
-                    <label>Rating:</label> <strong>{{userRating}} </strong>
-                    <mat-icon color="primary">star</mat-icon>
-                </mat-list-item>
-                <mat-list-item>
-                    <label>Arrangørniveau</label> <strong>{{metalName}} </strong><img [src]="metal">
-                </mat-list-item>
-                <mat-list-item>
-                    <label>Antal events som vært:</label>
-                    <mat-icon [matBadge]="eventsHosted" matBadgeColor="primary">home</mat-icon>
-                </mat-list-item>
-                <mat-list-item>
-                    <label>Antal events som deltager</label>
-                    <mat-icon [matBadge]="eventsAttended" matBadgeColor="primary">person_add</mat-icon>
-                </mat-list-item>
-                <mat-list-item>
-                    <label>Medlemskab er betalt til og med</label>
-                    <mat-chip-list>
-                        <mat-chip selected color="primary"> {{paidUntil | date:'short'}}</mat-chip>
-                    </mat-chip-list>
-                </mat-list-item>
-            </mat-list>
+      <mat-list>
+        <mat-list-item>
+          <label>Rating:</label> <strong>{{userRating}} </strong>
+          <mat-icon color="primary">star</mat-icon>
+        </mat-list-item>
+        <mat-list-item>
+          <label>Arrangørniveau</label> <strong>{{metalName}} </strong><img [src]="metal">
+        </mat-list-item>
+        <mat-list-item>
+          <label>Antal events som vært:</label>
+          <mat-icon [matBadge]="eventsHosted" matBadgeColor="primary">home</mat-icon>
+        </mat-list-item>
+        <mat-list-item>
+          <label>Antal events som deltager</label>
+          <mat-icon [matBadge]="eventsAttended" matBadgeColor="primary">person_add</mat-icon>
+        </mat-list-item>
+        <mat-list-item>
+          <label>Medlemskab er betalt til og med</label>
+          <mat-chip-list>
+            <mat-chip selected color="primary"> {{paidUntil | date:'short'}}</mat-chip>
+          </mat-chip-list>
+        </mat-list-item>
+      </mat-list>
 
-        </mat-card>
-    </div>
+
+
+    </mat-card>
+  </div>
 
 </div>

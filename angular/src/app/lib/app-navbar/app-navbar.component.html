@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
+<nav class="navbar navbar-expand-md navbar-light bg-light fixed-top" *ngIf="user$ | async as user">
 
     <img class="menu-logo" src="/assets/images/Logo.png" routerLink='/events'>
   
@@ -25,7 +25,9 @@
         [color]="profileSelected ? 'primary' : ''" 
         mat-raised-button
       >
-        <mat-icon>person</mat-icon> {{username | uppercase}}
+        <mat-icon *ngIf="!user.pictureUrl">person</mat-icon> 
+        <div class="user-picture" [ngStyle]="{'background-image': 'url('+user.pictureUrl+')'}"></div>
+        {{user.username | uppercase}}
         <img class="rating-shield" src="{{metal}}">
         {{rating.toFixed(1)}}<mat-icon style="color: #ff7a00">star</mat-icon>
       </button>

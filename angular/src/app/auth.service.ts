@@ -14,6 +14,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { User } from './entity/user/user';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateHelperService } from './services/translate.service';
+import { first } from 'rxjs/operators';
 
 
 @Injectable({
@@ -62,7 +63,6 @@ export class AuthService {
       .signInWithEmailAndPassword(formData.email, formData.password)
       .then(res => {
         const user = res.user
-        console.log({user})
         if (user !== null) {
             this.user = user;
             if (user.emailVerified) {
@@ -95,8 +95,25 @@ export class AuthService {
   doGoogleLogin() {
     const provider = new firebase.auth.GoogleAuthProvider();
     this.afAuth.auth.useDeviceLanguage();
-    return this.afAuth.auth.signInWithPopup(provider).then(function(result) {
-      // This gives you a Google Access Token. You can use it to access the Google API.
+    return this.afAuth.auth.signInWithPopup(provider).then( result => {
+      this.ufbs.getUserByID(result.user.uid).pipe(first()).subscribe(user => {
+        if(!user) {
+          const date = new Date();
+          date.setUTCFullYear(2020, 3, 1);
+          const userEntity: User = new User({
+            username:         result.user.displayName, 
+            email:            result.user.email,
+            subscribed_until: date,
+            firstName:        result.additionalUserInfo.profile["given_name"],
+            lastName:         result.additionalUserInfo.profile["family_name"],
+            pictureUrl:       result.additionalUserInfo.profile["picture"]
+          });
+          
+          this.ufbs.insertUser(userEntity, result.user.uid).then(() => {
+            this.router.navigate(['/my-profile']);
+          });
+        }
+      });
     }).catch(function(error) {
       // Handle Errors here.
       var errorCode = error.code;
@@ -177,6 +194,36 @@ export class AuthService {
       
       this.toast.error(err,'Fejl!');
     });
+  }
+
+  newUserRoutine() {
+    const firebaseUser = this.afAuth.auth.currentUser;
+    let userExists = false;
+    let u: User;
+    
+    let observer = this.ufbs.getList().subscribe( userSnapshots => {
+      userSnapshots.forEach(userSnapshot => {
+        if (userSnapshot.key === firebaseUser.uid) {
+          userExists = true;
+          u = new User(userSnapshot.payload.val());
+          
+        }
+      });
+      if (!userExists) {
+        const userEntity: User = new User({"username": firebaseUser.displayName, "email": firebaseUser.email});
+        const date = new Date();
+        date.setUTCFullYear(2019, 0, 1);
+        userEntity.subscribed_until = date;
+        this.ufbs.insertUser(userEntity, firebaseUser.uid);
+      } else {
+        
+        if (u.isActivated === false && !this.isDeletingUser) {
+          this.toast.warning('Din profil er ikke aktiv. For at aktivere skal du udfylde "Min Profil"','Hov!');
+        } 
+      }
+      observer.unsubscribe();
+    });
+
   }
   
 }

@@ -10,6 +10,13 @@
 .picture .overlayUpload {
   position: absolute;
   z-index: 10;
+  top: 0;
+  right: 0;
+  display: none;
+}
+
+.picture:hover .overlayUpload {
+  display: inline-block;
 }
 
 
@@ -21,6 +28,10 @@ h1 {
 .mat-tab-profile {
     background-color:#fff;
     margin-top: 10px;
+}
+
+mat-card {
+  width: 100%;
 }
 
 mat-form-field {
